@@ -1,0 +1,4 @@
+### change the 'nodes_number' if you want to runm this for more or less than 3 nodes
+nodes_number: 3
+
+### replace fields which specified with < > symbols  with your real nodes parameters

@@ -1,0 +1,30 @@
+---
+- hosts: controllers
+  become: true
+  vars_files:
+   ./vars.yaml
+  tasks:
+##update & and install packages
+#  - name: install packages
+ #   update_cache: yes
+  #   install_recommends: yes
+   #  name:
+#      - openvswitch-switch
+ #     - ovn-central
+  #    - ovn-host
+   #  state: present
+##copy inital configurations in all nodes
+#  - name: copy configs
+ #   copy:
+  #   src: ovn-central
+   #  dest: ~/ovn-central
+##change inital configurations in all nodes
+  - name: delete /etc/default/ovn-central
+    file:
+     path: /etc/default/ovn-central
+     state: absent
+  - name: set /etc/default/ovn-central new configs
+    copy:
+     src: ~/ovn-central
+     dest: /etc/default/ovn-central
+     remote_src: yes
