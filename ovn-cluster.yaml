@@ -3,22 +3,22 @@
   become: true
   vars_files:
    ./vars.yaml
-  tasks:
+  pre_tasks:
 ##update & and install packages
-#  - name: install packages
- #   update_cache: yes
-  #   install_recommends: yes
-   #  name:
-#      - openvswitch-switch
- #     - ovn-central
-  #    - ovn-host
-   #  state: present
+  - name: install packages
+    update_cache: yes
+     install_recommends: yes
+     name:
+      - openvswitch-switch
+      - ovn-central
+      - ovn-host
+     state: present
 ##copy inital configurations in all nodes
-#  - name: copy configs
- #   copy:
-  #   src: ovn-central
-   #  dest: ~/ovn-central
-##change inital configurations in all nodes
+  - name: copy configs
+    copy:
+     src: ovn-central
+     dest: ~/ovn-central
+##add inital configurations in all nodes
   - name: delete /etc/default/ovn-central
     file:
      path: /etc/default/ovn-central
@@ -28,3 +28,67 @@
      src: ~/ovn-central
      dest: /etc/default/ovn-central
      remote_src: yes
+##change configurations
+  - name: change db nb addr
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-nb-addr="
+     line: --db-nb-addr= "{{node1_ip}}"
+  - name: change  db sb addr
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-sb-addr="
+     line: --db-sb-addr= "{{node1_ip}}"
+###  - name: nodes ip address  
+###    debug: 
+###     var=hostvars[inventory_hostname]['ansible_default_ipv4']['address'] 
+### in node 1
+  - name: change 'north-band' local addr node1
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-nb-cluster-local-addr=<local>"
+     line: --db-nb-cluster-local-addr="{{node1_ip}}"
+    when: ansible_default_ipv4.address == "{{node1_ip}}"
+  - name: change 'south-band' local addr node1
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-sb-cluster-local-addr=<local>"
+     line: --db-sb-cluster-local-addr="{{node1_ip}}"
+    when: ansible_default_ipv4.address == "{{node1_ip}}"
+### in node2
+  - name: change 'north-band' local addr node2
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-nb-cluster-local-addr=<local>"
+     line: --db-nb-cluster-local-addr="{{node2_ip}}"
+    when: ansible_default_ipv4.address == "{{node2_ip}}"
+  - name: change 'south-band' local addr node2
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-sb-cluster-local-addr=<local>"
+     line: --db-sb-cluster-local-addr="{{node2_ip}}"
+    when: ansible_default_ipv4.address == "{{node2_ip}}"
+###in node3
+  - name: change 'north-band' local addr node3
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-nb-cluster-local-addr=<local>"
+     line: --db-nb-cluster-local-addr="{{node3_ip}}"
+    when: ansible_default_ipv4.address == "{{node3_ip}}"
+  - name: change 'south-band' local addr node3``
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--db-sb-cluster-local-addr=<local>"
+     line: --db-sb-cluster-local-addr="{{node3_ip}}"
+    when: ansible_default_ipv4.address == "{{node3_ip}}"
+### all nodes
+  - name: change 'northd-nb' local addr all nodes
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--ovn-northd-nb-db="
+     line: --ovn-northd-nb-db=tcp:"{{node1_ip}}":6641,tcp:"{{node2_ip}}":6641,tcp:"{{node3_ip}}":6641 \
+  - name: change 'northd-sb' local addr all nodes
+    lineinfile:
+     dest: /etc/default/ovn-central
+     regexp: "^--ovn-northd-sb-db="
+     line: --ovn-northd-sb-db=tcp:"{{node1_ip}}":6642,tcp:"{{node2_ip}}":6642,tcp:"{{node3_ip}}":6642 \
