@@ -15,10 +15,10 @@
       - ovn-host
      state: present
 ##copy inital configurations in all nodes
-  - name: copy configs
-    copy:
-     src: ovn-central
-     dest: ~/ovn-central
+######  - name: copy configs
+  #####  copy:
+    #### src: ovn-central
+     ####dest: ~/ovn-central
 ##add inital configurations in all nodes
   - name: delete /etc/default/ovn-central
     file:
@@ -26,9 +26,9 @@
      state: absent
   - name: set /etc/default/ovn-central new configs
     copy:
-     src: ~/ovn-central
+     src: ovn-central
      dest: /etc/default/ovn-central
-     remote_src: yes
+  ####   remote_src: yes
 ##change configurations
   - name: change db nb addr
     lineinfile:
