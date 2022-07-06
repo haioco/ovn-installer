@@ -3,10 +3,11 @@
   become: true
   vars_files:
    ./vars.yaml
-  pre_tasks:
+  tasks:
 ##update & and install packages
   - name: install packages
-    update_cache: yes
+    apt:
+     update_cache: yes
      install_recommends: yes
      name:
       - openvswitch-switch
@@ -92,3 +93,17 @@
      dest: /etc/default/ovn-central
      regexp: "^--ovn-northd-sb-db="
      line: --ovn-northd-sb-db=tcp:"{{node1_ip}}":6642,tcp:"{{node2_ip}}":6642,tcp:"{{node3_ip}}":6642 \
+### start ovn-central service
+  - name: Start service htovn-central, if not running
+    service:
+     name: ovn-central
+     state: started
+### output and errors of ovn-central
+  #- name: print to stdout
+   # command:
+  #   cmd: ovn-sbctl show
+ #    register: ovnsbctlshow
+#  - name: ovn show errors
+  #  debug: msg="{{ ovnsbctlshow.stdout }}"
+ # - name: ovn show output
+#    debug: msg="{{ ovnsbctlshow.stderr }}"
