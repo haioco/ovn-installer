@@ -98,12 +98,44 @@
     service:
      name: ovn-central
      state: started
-### output and errors of ovn-central
-  #- name: print to stdout
-   # command:
-  #   cmd: ovn-sbctl show
- #    register: ovnsbctlshow
-#  - name: ovn show errors
+##copy ovs-vsctl configurations in all nodes
+  - name: copy configs
+    copy:
+     src: ovn-host
+     dest: ~/ovn-host
+##change configurations
+  - name: change db nb addr
+    lineinfile:
+     dest: ~/ovn-host
+     regexp: "^external_ids:ovn-remote="
+     line:  external_ids:ovn-remote=tcp:"{{node1_ip}}":6642,tcp:"{{node2_ip}}":6642,tcp:"{{node3_ip}}":6642 \
+### in node 1
+  - name: change 'north-band' local addr node1
+    lineinfile:
+     dest: ~/ovn-host
+     regexp: "^external_ids:ovn-encap-ip="
+     line: external_ids:ovn-encap-ip="{{node1_ip}}"
+    when: ansible_default_ipv4.address == "{{node1_ip}}"
+### in node 2
+  - name: change 'north-band' local addr node2
+    lineinfile:
+     dest: ~/ovn-host
+     regexp: "^external_ids:ovn-encap-ip="
+     line: external_ids:ovn-encap-ip="{{node2_ip}}"
+    when: ansible_default_ipv4.address == "{{node2_ip}}"
+### in node 3
+  - name: change 'north-band' local addr node3
+    lineinfile:
+     dest: ~/ovn-host
+     regexp: "^external_ids:ovn-encap-ip="
+     line: external_ids:ovn-encap-ip="{{node3_ip}}"
+    when: ansible_default_ipv4.address == "{{node3_ip}}"
+
+ ###output and errors of ovn-central
+  - name: print to stdout
+    command:
+     cmd: bash ~/ovn-host
+###  - name: ovn show errors
   #  debug: msg="{{ ovnsbctlshow.stdout }}"
  # - name: ovn show output
 #    debug: msg="{{ ovnsbctlshow.stderr }}"

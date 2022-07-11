@@ -1,4 +1,4 @@
 ### replace fields which specified with < > symbols  with your real nodes parameters
-node1_ip: 193.141.126.152
-node2_ip: 193.141.126.168
-node3_ip: 192.168.1.4
+node1_ip: 192.168.1.44
+node2_ip: 192.168.1.49
+node3_ip: 192.168.1.50
