@@ -1,4 +1,4 @@
 sudo ovs-vsctl set open_vswitch . \
- external_ids:ovn-remote=tcp:<node1-ip>:6642,tcp:<node2-ip>:6642,tcp:<node3-ip>:6642 \
- external_ids:ovn-encap-type=geneve \
- external_ids:ovn-encap-ip=<local>
+external_ids:ovn-remote=tcp:<node1-ip>:6642,tcp:<node2-ip>:6642,tcp:<node3-ip>:6642 \
+external_ids:ovn-encap-type=geneve \
+external_ids:ovn-encap-ip=<local>
